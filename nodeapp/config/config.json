@@ -1,0 +1,23 @@
+{
+  "development": {
+    "username": "root",
+    "password": "ofloda01",
+    "database": "bank_database",
+    "host": "127.0.0.1",
+    "dialect": "mysql"
+  },
+  "test": {
+    "username": "adolfoc",
+    "password": "ofloda01",
+    "database": "bank_database",
+    "host": "34.42.1.3",
+    "dialect": "mysql"
+  },
+  "production": {
+    "username": "root",
+    "password": "ofloda01",
+    "database": "bank_database",
+    "host": "127.0.0.1",
+    "dialect": "mysql"
+  }
+}
