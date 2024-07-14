@@ -1,6 +1,9 @@
 const { Cliente, Cuenta } = require('../models');
+const bcrypt = require("bcryptjs");
+const jwt = require("jsonwebtoken");
 require('dotenv').config();
 const nodemailer = require('nodemailer');
+const SECRET_KEY = 'ProgramacionMovilIIUTH';
 
 function getRandomInt() {
     return Math.floor(Math.random() * 900000) + 100000;
@@ -44,8 +47,8 @@ module.exports = {
             correo,
             direccion
         })
-        .then(cliente => res.status(201).send(cliente))
-        .catch(error => res.status(400).send({ message: error.message }));
+            .then(cliente => res.status(201).send(cliente))
+            .catch(error => res.status(400).send({ message: error.message }));
     },
     list(_, res) {
         return Cliente.findAll({})
@@ -58,13 +61,13 @@ module.exports = {
         return Cliente.findOne({
             where: { id }
         })
-        .then(cliente => {
-            if (!cliente) {
-                return res.status(404).send({ message: 'Cliente no encontrado' });
-            }
-            return res.status(200).send(cliente);
-        })
-        .catch(error => res.status(400).send({ message: error.message }));
+            .then(cliente => {
+                if (!cliente) {
+                    return res.status(404).send({ message: 'Cliente no encontrado' });
+                }
+                return res.status(200).send(cliente);
+            })
+            .catch(error => res.status(400).send({ message: error.message }));
     },
     async findWithCuentas(req, res) {
         const { id } = req.params;
@@ -120,5 +123,33 @@ module.exports = {
         } catch (error) {
             return res.status(400).send({ message: error.message });
         }
+    },
+    async userLogin(req, res) {
+        const { usuario, password } = req.params;
+        if (!usuario || !password) {
+            return res.status(400).send({ message: 'todos los campos son requeridos' });
+        }
+        try {
+            const user = await Cliente.findOne({
+                where: { usuario },
+            });
+            if (!user) {
+                return res.status(404).send({ message: 'usuario no encontrado' });
+            }
+            const isMatch = await bcrypt.compare(req.params.password, user.keyword);
+            if (!isMatch) {
+                return res.status(401).send("Email o contraseña incorrecta!");
+            } else {
+                const payload = { id: user.id, nombre: user.nombre };
+                const token = jwt.sign(payload, SECRET_KEY);
+                return res.status(200).json({ user, token });
+            }
+
+        }catch(error) {
+            console.log(error);
+            return res.status(500).send("login: Hubo un error" + error);
     }
+
+
+}
 };

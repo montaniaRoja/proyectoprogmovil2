@@ -23,5 +23,7 @@ module.exports = (app) => {
     app.post('/api/transaccion/create/', transaccionController.create);
     app.get('/api/cuenta/find/:id/transacciones', cuentaController.findWithTransacciones);
 
+    app.get('/api/cliente/finduser/:usuario/:password', clienteController.userLogin);
+
 
 };
